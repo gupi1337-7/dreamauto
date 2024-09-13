@@ -41,7 +41,7 @@ If you want to install the extension manually (for example, for testing or devel
 2. Unzip the downloaded file.
 3. Open Google Chrome and go to the `chrome://extensions/` page.
 4. Turn on `Developer Mode` in the top right corner.
-5. Click “Load unpacked” and select the folder with the unzipped extension.
+5. Click `Load unpacked` and select the folder with the unzipped extension.
 
 ## 📜 Usage
 
