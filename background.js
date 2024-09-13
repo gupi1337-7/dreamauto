@@ -17,6 +17,8 @@ function startCountdown() {
       chrome.storage.local.set({ countdownValue: countdownValue }),
       popupPort && popupPort.postMessage({ countdownValue: countdownValue });
   }, 1e3);
+
+  ///asdasd
 }
 function checkSite() {
   chrome.tabs.query(
