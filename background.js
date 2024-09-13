@@ -39,6 +39,8 @@ function checkSite() {
     }
   );
 }
+
+//dsad
 function checkErrorsAndReload() {
   chrome.scripting.executeScript({
     target: { tabId: tabId },
