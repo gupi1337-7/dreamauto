@@ -1,6 +1,6 @@
 importScripts("ExtPay.js");
 const extpay = ExtPay("dreamauto");
-let tabId;
+let tabId; // eto jest
 extpay.startBackground(),
   extpay.getUser().then((e) => {
     console.log(e);
