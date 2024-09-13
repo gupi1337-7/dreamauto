@@ -82,3 +82,7 @@ This project is licensed under [MIT License](LICENSE).
 ## 📞 Support
 
 If you have any problems or questions, please create a [issue](https://github.com/gupi1337-7/dreamauto/issues) in this repository.
+
+---
+
+**Note:** This extension is not officially affiliated with Dream-Singles.com. Use it responsibly and in accordance with Dream-Singles.com's terms of service.
