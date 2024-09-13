@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Popup</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+      html {
+        width: 700px;
+        height: 600px;
+      }
+      body {
+        background-color: #000;
+        font-family: Arial, sans-serif;
+        height: 90%;
+        width: 100%;
+        position: relative;
+        overflow-y: scroll;
+        scrollbar-gutter: stable;
+        margin: 0;
+        padding: 0;
+      }
+      p {
+        font-family: "Trebuchet MS", sans-serif;
+        margin-left: 3px;
+        font-size: 11px;
+        font-weight: bold;
+        color: #0ff;
+      }
+      label {
+        margin-top: 10px;
+        font-family: Arial, sans-serif;
+        color: #0ff;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      .center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+      #timerValue {
+        font-family: Arial, sans-serif;
+        color: #0ff;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      #minutesText {
+        font-family: Arial, sans-serif;
+        color: #0ff;
+        font-size: 12px;
+        font-weight: bold;
+      }
+      #script-status {
+        font-family: Arial, sans-serif;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      select {
+        font-family: Arial, sans-serif;
+        display: inline-block;
+        padding: 5px;
+        font-size: 12px;
+        border: 2px solid white;
+        border-radius: 5px;
+        background-color: black;
+        color: #0ff;
+        margin-bottom: 10px;
+        width: 230px;
+        font-weight: bold;
+      }
+      button {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        font-family: Arial, sans-serif;
+        color: #000;
+        margin-bottom: 15px;
+      }
+      button:hover {
+        transform: scale(1.1);
+      }
+      button:active {
+        font-family: Arial, sans-serif;
+        transform: translateY(2px);
+      }
+      .container {
+        border: 5px solid #0ff;
+        border-radius: 20px;
+        padding-left: 100px;
+        padding-right: 100px;
+        padding-top: 37px;
+        height: 479px;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        background-color: rgba(0, 0, 0, 0.8);
+        text-align: center;
+        position: relative;
+        margin: 10px;
+      }
+
+      #start-script {
+        background-color: #0ff;
+      }
+      #stop-script {
+        background-color: #f00f10;
+      }
+      nav {
+        position: absolute;
+        top: 18px;
+        right: 20px;
+        padding-bottom: 100px;
+      }
+
+      .nav-links {
+        list-style: none;
+        display: flex;
+        padding: 0;
+      }
+
+      .nav-item {
+        margin: 0 15px;
+        cursor: pointer;
+        position: relative;
+        color: #0ff;
+      }
+
+      .nav-item:hover {
+        color: orange;
+      }
+
+      .underline {
+        position: absolute;
+        bottom: -5px;
+        height: 2px;
+        background: #fff;
+        width: 0;
+        transition: left 0.3s ease, width 0.3s ease;
+      }
+      .nav-item a {
+        font-family: Arial, sans-serif;
+        text-decoration: none;
+        color: #0ff;
+        display: block;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .nav-item:hover a {
+        color: orange;
+      }
+      .fade-out {
+        animation: fadeOut 1s forwards;
+      }
+
+      .fade-in {
+        animation: fadeIn 1s forwards;
+      }
+
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .hidden {
+        opacity: 0;
+        transform: scale(0.9);
+        pointer-events: none;
+        visibility: hidden;
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s ease-in-out forwards;
+      }
+      #titleChat {
+        font-size: 12px;
+      }
+      #start-script {
+        background-color: #0ff;
+        position: fixed;
+        bottom: 0;
+        left: 18px;
+      }
+      #stop-script {
+        background-color: #f00f10;
+        position: fixed;
+        bottom: 0;
+        left: 110px;
+      }
+      .running {
+        color: #0ff;
+      }
+      .stopped {
+        color: red;
+      }
+      #countdown-display {
+        font-family: "Trebuchet MS", sans-serif;
+        position: fixed;
+        bottom: 22px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 16px;
+        color: #0ff;
+        z-index: 1000;
+        font-weight: bold;
+      }
+      #emoji-display {
+        margin-bottom: 22px;
+      }
+      #ChattextField {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        border: 0px solid #0ff;
+        border-radius: 12px;
+        padding: 10px;
+        resize: none;
+        color: #0ff;
+        background-color: #000;
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+        height: 100px;
+        width: 420px;
+      }
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #000;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #000;
+        border-radius: 611px;
+        cursor: default;
+      }
+      button {
+        font-size: 13px;
+      }
+      #lettershtml,
+      #sendinghtml {
+        font-size: 12px;
+        font-weight: 600;
+      }
+      #favoriteShouldClick {
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content" class="hidden">
+      <div class="container">
+        <nav>
+          <ul class="nav-links">
+            <li class="nav-item">
+              <a href="popup.html" id="lettershtml">Letters</a>
+            </li>
+            <li class="nav-item">
+              <a href="sender.html" id="sendinghtml">Sender</a>
+            </li>
+          </ul>
+          <div class="underline"></div>
+        </nav>
+        <p id="titleChat">AutoChat</p>
+
+        <div id="centeredContent">
+          <select id="emoji-select">
+            <option value="Emoji">Emoji</option>
+            <option value="Love">Love</option>
+            <option value="Sad">Sad</option>
+            <option value="Angry">Angry</option>
+            <option value="Romantic">Romantic</option>
+            <option value="Dating">Dating</option>
+            <option value="Serious">Serious</option>
+          </select>
+        </div>
+        <div id="centeredContent">
+          <select id="mode-select">
+            <option value="Online">Online</option>
+            <option value="ThirdPartyMessages">3rdParty</option>
+            <option value="Hi/Hello">Hi/Hello</option>
+            <option value="Letters!">Letters!</option>
+            <option value="Romance">Romance</option>
+            <option value="CameraON">CameraON</option>
+            <option value="CameraOff">CameraOff</option>
+            <option value="Important">Important</option>
+            <option value="UserInput">UserInput</option>
+          </select>
+        </div>
+        <div id="centeredContent">
+          <input
+            type="checkbox"
+            id="favoriteShouldClick"
+            name="favoriteShouldClick"
+          />
+          <label for="favoriteShouldClick">Add favorites to sending</label>
+        </div>
+
+        <div id="centeredContent2">
+          <label for="timer">Select time</label>
+        </div>
+        <div class="center">
+          <input
+            type="range"
+            id="timer"
+            name="timer"
+            min="1"
+            max="60"
+            value="5"
+          />
+        </div>
+
+        <div id="centeredContent">
+          <span id="timerValue">5</span><span id="minutesText"> minutes</span
+          ><br /><br />
+        </div>
+        <div id="centeredContent2">
+          <div id="script-status" class="stopped">Sending Stopped</div>
+          <p id="mode-selectP"></p>
+          <p id="emoji-selectP"></p>
+          <label id="textFieldLabel" for="ChattextField" class="hidden"
+            >You can put your invites down here:</label
+          >
+
+          <textarea
+            id="ChattextField"
+            name="Area"
+            rows="4"
+            cols="30"
+            placeholder="Provide your own invites each with a new line:"
+          ></textarea>
+        </div>
+      </div>
+    </div>
+    <div id="countdown-display"></div>
+    <button id="start-script">Start</button>
+    <button id="stop-script">Stop</button>
+
+    <script src="p.js"></script>
+    <script src="l.js"></script>
+  </body>
+</html>

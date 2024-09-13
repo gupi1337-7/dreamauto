@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>DreamAutoSender</title>
+    <style>
+      html,
+      body {
+        width: 700px;
+        height: 600px;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      #centeredContent {
+        text-align: center;
+      }
+
+      ::-webkit-scrollbar {
+        width: 0px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #000;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #000;
+        border-radius: 611px;
+        cursor: default;
+      }
+
+      button {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 20px;
+        font-weight: 700;
+        font-size: 13px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+        font-family: Arial, sans-serif;
+        color: #000;
+        margin-bottom: 15px;
+      }
+
+      button:hover {
+        transform: scale(1.1);
+      }
+
+      p {
+        margin-left: 15px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #0ff;
+      }
+
+      body {
+        background-color: #000;
+        font-family: Arial, sans-serif;
+        position: relative;
+        margin: 0;
+        padding: 0;
+      }
+
+      .checkbox-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding-left: 135px;
+        margin-top: 55px;
+      }
+
+      .checkbox-item input[type="checkbox"] {
+        margin-right: 15px;
+        width: 27px;
+        height: 27px;
+      }
+
+      .checkbox-item label {
+        font-size: 17px;
+        white-space: nowrap;
+      }
+
+      input[type="checkbox"] {
+        width: 27px;
+        height: 27px;
+        border: 2px solid orangered;
+        margin-right: 10px;
+      }
+
+      input[type="checkbox"] + label {
+        font-size: 33px;
+        font-weight: 700;
+        font-family: Arial, sans-serif;
+        color: #0ff;
+      }
+
+      nav {
+        position: absolute;
+        top: 33px;
+        right: 45px;
+        padding-bottom: 100px;
+        text-align: center;
+      }
+
+      .nav-links {
+        list-style: none;
+        display: flex;
+        padding: 0;
+      }
+
+      .nav-item {
+        margin: 0 15px;
+        cursor: pointer;
+        position: relative;
+        color: #0ff;
+      }
+
+      .nav-item:hover {
+        color: orange;
+      }
+
+      .underline {
+        position: absolute;
+        bottom: -5px;
+        height: 2px;
+        background: #fff;
+        width: 0;
+        transition: left 0.3s ease, width 0.3s ease;
+      }
+
+      .nav-item a {
+        font-family: Arial, sans-serif;
+        text-decoration: none;
+        color: #0ff;
+        display: block;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .nav-item:hover a {
+        color: orange;
+      }
+
+      .fade-out {
+        animation: fadeOut 1s forwards;
+      }
+
+      .fade-in {
+        animation: fadeIn 1s forwards;
+      }
+
+      @keyframes fadeOut {
+        from {
+          opacity: 1;
+        }
+        to {
+          opacity: 0;
+        }
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 22px;
+        margin-bottom: 30px;
+      }
+
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: 0.4s;
+        text-align: center;
+        line-height: 22px;
+      }
+
+      .slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 7px;
+        bottom: 1px;
+        background-color: white;
+        transition: 0.4s;
+      }
+
+      input:checked + .slider {
+        background-color: #2196f3;
+      }
+
+      input:checked + .slider:before {
+        transform: translateX(26px);
+      }
+
+      .slider.round {
+        border-radius: 34px;
+      }
+
+      .slider.round:before {
+        border-radius: 50%;
+      }
+
+      #click-button {
+        background-color: #0ff;
+        position: fixed;
+        bottom: 0px;
+        left: 18px;
+      }
+
+      #open-button {
+        background-color: orange;
+        position: fixed;
+        bottom: 0px;
+        left: 110px;
+      }
+
+      .hidden {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s ease-in-out forwards;
+      }
+
+      #titleSender {
+        font-family: Arial, sans-serif;
+        color: #0ff;
+        font-size: 14px;
+        position: absolute;
+        top: 50px;
+        left: 305px;
+        text-decoration: underline;
+      }
+
+      .container {
+        border: 5px solid #0ff;
+        border-radius: 20px;
+        padding-left: 100px;
+        padding-right: 100px;
+        padding-top: 45px;
+        box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        background-color: rgba(0, 0, 0, 0.8);
+        text-align: center;
+        margin: 10px;
+        height: 471px;
+      }
+
+      h2 {
+        font-family: Arial, sans-serif;
+        text-decoration: none;
+        color: #0ff;
+        display: block;
+        font-size: 18px;
+        font-weight: 600;
+        margin-top: 50px;
+      }
+
+      h1 {
+        font-family: Arial, sans-serif;
+        text-decoration: none;
+        color: #0ff;
+        display: block;
+        font-size: 25px;
+        font-weight: 600;
+      }
+
+      .checkbox-item {
+        font-family: Arial, sans-serif;
+        text-decoration: none;
+        color: #0ff;
+        display: block;
+        font-size: 17px;
+        font-weight: 600;
+        text-align: center;
+        justify-items: center;
+      }
+
+      #fastdiv {
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="content" class="hidden">
+      <nav>
+        <ul class="nav-links">
+          <li class="nav-item">
+            <a href="popup.html" id="lettershtml">Letters</a>
+          </li>
+          <li class="nav-item"><a href="chat.html" id="chathtml">Chat</a></li>
+        </ul>
+        <div class="underline"></div>
+      </nav>
+      <div class="container">
+        <div id="centeredContent">
+          <h1>AutoSender</h1>
+        </div>
+
+        <div class="checkbox-container">
+          <div class="checkbox-item">
+            <input type="checkbox" id="onlineOnly" name="onlineOnly" />
+            <label for="onlineOnly">Online</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="offlineOnly" name="offlineOnly" />
+            <label for="offlineOnly">Offline</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="favorites" name="favorites" />
+            <label for="favorites">Favorites</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="admirers" name="admirers" />
+            <label for="admirers">Admirers</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="contacts" name="contacts" />
+            <label for="contacts">Contacts</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="newGuys" name="newGuys" />
+            <label for="newGuys">New Men</label>
+          </div>
+        </div>
+
+        <div id="fastdiv" style="text-align: center">
+          <h2>FastMode*</h2>
+          <label
+            class="switch"
+            title="FastMode is an experimental feature, use at your own risk"
+          >
+            <input type="checkbox" name="fastMode" />
+            <span class="slider round"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+    <button id="open-button">Открыть</button>
+    <button id="click-button">Нажать</button>
+
+    <script src="se.js"></script>
+    <script src="l.js"></script>
+  </body>
+</html>

@@ -1,0 +1,1335 @@
+<link href=https://fonts.googleapis.com rel=preconnect><link
+href=https://fonts.gstatic.com rel=preconnect crossorigin><link
+  href="https://fonts.googleapis.com/css2?family=Pacifico&family=Playpen+Sans:wght@100&family=Sedgwick+Ave+Display&display=swap"
+  rel="stylesheet"
+/><style>
+  ::-webkit-scrollbar {
+    width: 0px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #000;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #000;
+    border-radius: 611px;
+    cursor: default;
+  }
+  html {
+    width: 700px;
+    height: 600px;
+  }
+  body {
+    background-color: #000;
+    font-family: Arial, sans-serif;
+    width: 700px;
+    height: 600px;
+    position: relative;
+    overflow-y: scroll;
+    scrollbar-gutter: stable;
+    margin: 0;
+    padding: 0;
+  }
+
+  #text-fields {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px;
+    padding-bottom: 70px;
+    margin-top: 70px;
+  }
+  textarea {
+    border: 2px solid #0ff;
+    border-radius: 12px;
+    padding: 10px;
+    resize: none;
+    color: #0ff;
+    background-color: #000;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    height: 100px;
+  }
+  p {
+    font-size: 12px;
+    font-weight: 700;
+    color: #0ff;
+  }
+  #status {
+    font-size: 9px;
+    font-weight: 700;
+    color: #0ff;
+  }
+  #checkStatus {
+    font-size: 11px;
+    font-weight: 700;
+    color: #0ff;
+  }
+  #centeredContent {
+    text-align: center;
+  }
+  .center1 {
+    text-decoration: none;
+    margin: 0 auto;
+    display: block;
+    margin-bottom: 40px;
+    border: 1px solid #888;
+    text-decoration: none;
+    font-size: 20px;
+    padding: 15px;
+    background-color: #0ff;
+  }
+  #clear-button,
+  #save-button,
+  #stop-button {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    font-family: Arial, sans-serif;
+    color: #000;
+    margin-bottom: 15px;
+  }
+  #save-button {
+    background-color: #0ff;
+    position: fixed;
+    bottom: 0;
+    left: 18;
+  }
+  #clear-button {
+    background-color: #f00f10;
+    position: fixed;
+    bottom: 0;
+    left: 294px;
+  }
+  #stop-button {
+    background-color: orange;
+    position: fixed;
+    bottom: 0;
+    left: 110px;
+  }
+  #clear-button:hover,
+  #save-button:hover,
+  #stop-button:hover {
+    transform: scale(1.1);
+  }
+  textarea:focus {
+    border-color: orange;
+    color: orange;
+  }
+  @keyframes blink {
+    0% {
+      opacity: 0;
+    }
+    50% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+  textarea::placeholder {
+    animation-name: blink;
+    animation-duration: 1s;
+    animation-iteration-count: infinite;
+  }
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: #000;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+  .modal-content {
+    background-color: #000;
+    margin-left: 20px;
+    margin-top: 34px;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 88%;
+    height: auto;
+    margin-bottom: 62px;
+    overflow: auto;
+  }
+  .modal1 {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+  }
+  .modal1-content {
+    background-color: #000;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 77%;
+  }
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: 700;
+  }
+  .close:focus,
+  .close:hover {
+    color: red;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .text-field-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .video-upload {
+    display: flex;
+    align-items: center;
+    margin-left: 5px;
+    background-color: #000;
+    font-size: 12px;
+    font-family: Pacifico, cursive;
+  }
+  .video-upload input {
+    border: none;
+    color: #0ff;
+    background-color: #000;
+    font-size: 12px;
+    font-family: Pacifico, cursive;
+    width: 70%;
+  }
+  .video-upload span {
+    margin-left: 10px;
+  }
+  .video-preview {
+    display: none;
+    width: 60px;
+    height: auto;
+    margin-left: 45px;
+  }
+  .video-upload-button {
+    background-color: #000;
+    color: #0ff;
+    border: 2px solid #0ff;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 10px;
+    margin: 4px 2px;
+    margin-left: 25px;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: none !important;
+    animation: none !important;
+    width: 100px;
+    height: 60px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .video-upload-button:hover {
+    border-color: orange;
+    color: orange;
+  }
+  .hidden {
+    display: none;
+  }
+  #countdown-display {
+    background-color: #000;
+  }
+  #login-button,
+  #pay-button,
+  #trial-button {
+    background-color: #1f1e1e;
+    color: #0ff;
+    border: 2px #0ff;
+    text-decoration: none;
+    font-size: 20px;
+    margin: 4px 2px;
+    cursor: pointer;
+    width: 80px;
+    height: 50px;
+    text-decoration: none;
+    margin: 0 auto;
+    display: block;
+    margin-bottom: 20px;
+    border: 1px solid #888;
+    text-decoration: none;
+    font-size: 20px;
+    padding-left: 15px;
+    border-radius: 20%;
+    font-weight: 10;
+  }
+  #add-button {
+    background-color: #1f1e1e;
+    color: #0ff;
+    border: 2px #0ff;
+    padding: 5px 5px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 20px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: none !important;
+    animation: none !important;
+    width: 35px;
+    height: 35px;
+    font-weight: 10;
+  }
+  #enableSound,
+  #enableRadio {
+    background-color: #1f1e1e;
+    color: #0ff;
+
+    padding: 5px 5px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: none !important;
+    animation: none !important;
+    width: 35px;
+    height: 35px;
+  }
+  .enabled {
+    border: 2px solid #0ff;
+    background-color: #0ff;
+    border-color: #0ff;
+  }
+
+  .disabled {
+    border: 2px solid red;
+    background-color: red;
+    border-color: red;
+  }
+
+  nav {
+    position: absolute;
+    top: 23px;
+    right: 35px;
+    padding-bottom: 100px;
+    text-align: center;
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    padding: 0;
+  }
+
+  .nav-item {
+    margin: 0 15px;
+    cursor: pointer;
+    position: relative;
+    color: #0ff;
+  }
+
+  .nav-item:hover {
+    color: orange;
+  }
+
+  .underline {
+    position: absolute;
+    bottom: -5px;
+    height: 2px;
+    background: #fff;
+    width: 0;
+    transition: left 0.3s ease, width 0.3s ease;
+  }
+  .nav-item a {
+    font-family: Arial, sans-serif;
+    text-decoration: none;
+    color: #0ff;
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .nav-item:hover a {
+    color: orange;
+  }
+  .fade-out {
+    animation: fadeOut 1s forwards;
+  }
+
+  .fade-in {
+    animation: fadeIn 1s forwards;
+  }
+
+  @keyframes fadeOut {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .hidden {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out forwards;
+  }
+  #titleLetters {
+    font-family: Arial, sans-serif;
+    color: #0ff;
+    font-size: 14px;
+  }
+  .container {
+    border: 5px solid #0ff;
+    border-radius: 20px;
+    padding-left: 20px;
+    padding-top: 15px;
+    padding-right: 50px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    background-color: rgba(0, 0, 0, 0.8);
+    margin: 10px;
+
+    margin-bottom: 20px;
+  }
+  .genre-menu {
+    position: fixed;
+    bottom: 60px;
+    right: 160px;
+    width: 200px;
+    height: 100px;
+    display: none;
+  }
+  .genre-item {
+    position: absolute;
+    width: 45px;
+    height: 45px;
+    border: 2px solid rgb(0, 0, 0);
+    border-radius: 50%;
+    background-color: #00ffff;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .genre-item:hover {
+    background-color: orange;
+    transform: scale(1.1);
+  }
+
+  #enableRadio.active {
+    background-color: #0ff;
+    color: #000;
+  }
+  button {
+    font-weight: 700;
+    font-size: 13px;
+  }
+  #chathtml,
+  #sendinghtml {
+    font-size: 12px;
+    font-weight: 600;
+  }
+</style>
+<div class="modal1" id="myModal1">
+  <div class="modal1-content">
+    <p>.</p>
+  </div>
+</div>
+<div class="modal" id="myModal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>.</p>
+  </div>
+</div>
+<div id="content" class="hidden">
+  <nav>
+    <ul class="nav-links">
+      <li class="nav-item"><a href="chat.html" id="chathtml">Chat</a></li>
+      <li class="nav-item">
+        <a href="sender.html" id="sendinghtml">Sender</a>
+      </li>
+    </ul>
+    <div class="underline"></div>
+  </nav>
+  <div class="container">
+    <div></div>
+    <div id="centeredContent">
+      <span id="status"><br /></span>
+
+      <span
+        id="checkStatus"
+        style="
+          cursor: pointer;
+          text-decoration: underline;
+          text-underline-position: under;
+          text-align: center;
+          border-bottom: 1px solid;
+        "
+        ><br
+      /></span>
+    </div>
+    <div id="centeredContent">
+      <p id="titleLetters">AutoLetters</p>
+    </div>
+    <button id="preloadAudio" style="display: none">Preload Audio</button>
+    <script src="ExtPay.js"></script>
+
+    <div id="text-fields">
+      <div class="text-field-wrapper">
+        <textarea
+          cols="56"
+          id="text-1"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-1"></label> <input accept=video/* id=video-1
+          style=display:none type=file>
+          <button id="video-name-1" class="video-upload-button">No video</button
+          ><video class="video-preview" controls id="video-preview-1"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper">
+        <textarea
+          cols="56"
+          id="text-2"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-2"></label> <input accept=video/* id=video-2
+          style=display:none type=file>
+          <button id="video-name-2" class="video-upload-button">No video</button
+          ><video class="video-preview" controls id="video-preview-2"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper">
+        <textarea
+          cols="56"
+          id="text-3"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-3"></label> <input accept=video/* id=video-3
+          style=display:none type=file>
+          <button id="video-name-3" class="video-upload-button">No video</button
+          ><video class="video-preview" controls id="video-preview-3"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper">
+        <textarea
+          cols="56"
+          id="text-4"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-4"></label> <input accept=video/* id=video-4
+          style=display:none type=file>
+          <button id="video-name-4" class="video-upload-button">No video</button
+          ><video class="video-preview" controls id="video-preview-4"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-5"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-5"></label> <input accept=video/* id=video-5
+          style=display:none type=file>
+          <button id="video-name-5" class="video-upload-button">No video</button
+          ><video class="video-preview" controls id="video-preview-5"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-6"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-6"></label> <input accept=video/* id=video-6
+          style=display:none type=file>
+          <button id="video-name-6" class="video-upload-button">No video</button
+          ><video class="video-preview" controls id="video-preview-6"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-7"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-7"></label> <input accept=video/* id=video-7
+          style=display:none type=file>
+          <button id="video-name-7" class="video-upload-button">No video</button
+          ><video class="video-preview" controls id="video-preview-7"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-8"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-8"></label> <input accept=video/* id=video-8
+          style=display:none type=file>
+          <button id="video-name-8" class="video-upload-button">No video</button
+          ><video class="video-preview" controls id="video-preview-8"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-9"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-9"></label> <input accept=video/* id=video-9
+          style=display:none type=file>
+          <button id="video-name-9" class="video-upload-button">No video</button
+          ><video class="video-preview" controls id="video-preview-9"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-10"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-10"></label> <input accept=video/* id=video-10
+          style=display:none type=file>
+          <button id="video-name-10" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-10"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-11"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-11"></label> <input accept=video/* id=video-11
+          style=display:none type=file>
+          <button id="video-name-11" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-11"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-12"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-12"></label> <input accept=video/* id=video-12
+          style=display:none type=file>
+          <button id="video-name-12" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-12"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-13"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-13"></label> <input accept=video/* id=video-13
+          style=display:none type=file>
+          <button id="video-name-13" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-13"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-14"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-14"></label> <input accept=video/* id=video-14
+          style=display:none type=file>
+          <button id="video-name-14" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-14"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-15"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-15"></label> <input accept=video/* id=video-15
+          style=display:none type=file>
+          <button id="video-name-15" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-15"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-16"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-16"></label> <input accept=video/* id=video-16
+          style=display:none type=file>
+          <button id="video-name-16" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-16"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-17"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-17"></label> <input accept=video/* id=video-17
+          style=display:none type=file>
+          <button id="video-name-17" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-17"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-18"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-18"></label> <input accept=video/* id=video-18
+          style=display:none type=file>
+          <button id="video-name-18" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-18"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-19"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-19"></label> <input accept=video/* id=video-19
+          style=display:none type=file>
+          <button id="video-name-19" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-19"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-20"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-20"></label> <input accept=video/* id=video-20
+          style=display:none type=file>
+          <button id="video-name-20" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-20"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-21"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-21"></label> <input accept=video/* id=video-21
+          style=display:none type=file>
+          <button id="video-name-21" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-21"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-22"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-22"></label> <input accept=video/* id=video-22
+          style=display:none type=file>
+          <button id="video-name-22" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-22"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-23"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-23"></label> <input accept=video/* id=video-23
+          style=display:none type=file>
+          <button id="video-name-23" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-23"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-24"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-24"></label> <input accept=video/* id=video-24
+          style=display:none type=file>
+          <button id="video-name-24" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-24"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-25"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-25"></label> <input accept=video/* id=video-25
+          style=display:none type=file>
+          <button id="video-name-25" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-25"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-26"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-26"></label> <input accept=video/* id=video-26
+          style=display:none type=file>
+          <button id="video-name-26" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-26"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-27"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-27"></label> <input accept=video/* id=video-27
+          style=display:none type=file>
+          <button id="video-name-27" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-27"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-28"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-28"></label> <input accept=video/* id=video-28
+          style=display:none type=file>
+          <button id="video-name-28" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-28"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-29"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-29"></label> <input accept=video/* id=video-29
+          style=display:none type=file>
+          <button id="video-name-29" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-29"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-30"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-30"></label> <input accept=video/* id=video-30
+          style=display:none type=file>
+          <button id="video-name-30" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-30"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-31"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-31"></label> <input accept=video/* id=video-31
+          style=display:none type=file>
+          <button id="video-name-31" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-31"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-32"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-32"></label> <input accept=video/* id=video-32
+          style=display:none type=file>
+          <button id="video-name-32" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-32"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-33"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-33"></label> <input accept=video/* id=video-33
+          style=display:none type=file>
+          <button id="video-name-33" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-33"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-34"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-34"></label> <input accept=video/* id=video-34
+          style=display:none type=file>
+          <button id="video-name-34" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-34"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-35"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-35"></label> <input accept=video/* id=video-35
+          style=display:none type=file>
+          <button id="video-name-35" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-35"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-36"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-36"></label> <input accept=video/* id=video-36
+          style=display:none type=file>
+          <button id="video-name-36" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-36"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-37"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-37"></label> <input accept=video/* id=video-37
+          style=display:none type=file>
+          <button id="video-name-37" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-37"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-38"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-38"></label> <input accept=video/* id=video-38
+          style=display:none type=file>
+          <button id="video-name-38" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-38"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-39"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-39"></label> <input accept=video/* id=video-39
+          style=display:none type=file>
+          <button id="video-name-39" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-39"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-40"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-40"></label> <input accept=video/* id=video-40
+          style=display:none type=file>
+          <button id="video-name-40" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-40"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-41"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-41"></label> <input accept=video/* id=video-41
+          style=display:none type=file>
+          <button id="video-name-41" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-41"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-42"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-42"></label> <input accept=video/* id=video-42
+          style=display:none type=file>
+          <button id="video-name-42" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-42"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-43"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-43"></label> <input accept=video/* id=video-43
+          style=display:none type=file>
+          <button id="video-name-43" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-43"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-44"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-44"></label> <input accept=video/* id=video-44
+          style=display:none type=file>
+          <button id="video-name-44" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-44"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-45"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-45"></label> <input accept=video/* id=video-45
+          style=display:none type=file>
+          <button id="video-name-45" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-45"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-46"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-46"></label> <input accept=video/* id=video-46
+          style=display:none type=file>
+          <button id="video-name-46" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-46"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-47"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-47"></label> <input accept=video/* id=video-47
+          style=display:none type=file>
+          <button id="video-name-47" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-47"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-48"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-48"></label> <input accept=video/* id=video-48
+          style=display:none type=file>
+          <button id="video-name-48" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-48"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-49"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-49"></label> <input accept=video/* id=video-49
+          style=display:none type=file>
+          <button id="video-name-49" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-49"></video>
+        </div>
+      </div>
+      <div class="text-field-wrapper hidden">
+        <textarea
+          cols="56"
+          id="text-50"
+          placeholder="Enter text"
+          required
+          rows="1"
+        ></textarea>
+        <div class="video-upload">
+          <label for="video-50"></label> <input accept=video/* id=video-50
+          style=display:none type=file>
+          <button id="video-name-50" class="video-upload-button">
+            No video</button
+          ><video class="video-preview" controls id="video-preview-50"></video>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<button id="save-button">Start</button>
+<button id="stop-button">Stop</button>
+<button id="clear-button">Clear and stop</button>
+<button id="add-button" style="position: fixed; bottom: 11px; right: 20px">
+  +
+</button>
+<button
+  id="enableSound"
+  class="disabled"
+  style="position: fixed; bottom: 11px; right: 90px"
+>
+  &#128263;
+</button>
+<button id="enableRadio" style="position: fixed; bottom: 11px; right: 160px">
+  &#127926;
+</button>
+<div class="genre-menu">
+  <div class="genre-item" id="rockButton">Rock</div>
+  <div class="genre-item" id="popButton">Pop</div>
+  <div class="genre-item" id="jazzButton">Jazz</div>
+  <div class="genre-item" id="clasicButton">Classic</div>
+  <div class="genre-item" id="bluesButton">Blues</div>
+  <div class="genre-item" id="hiphopButton">Hip-hop</div>
+</div>
+
+<p
+  align="center"
+  id="countdown-display"
+  style="position: fixed; top: 11px; left: 25px"
+>
+  Time before the next letter: 00:00
+</p>
+<script src="s.js"></script>
+<script src="v.js"></script>
+<script src="l.js"></script>
+<script src="R.js"></script>
+<script></script>

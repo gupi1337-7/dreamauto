@@ -1,0 +1,44 @@
+{
+  "manifest_version": 3,
+  "name": "DreamAuto",
+  "description": "All-in-one software for website interaction on Dream-Singles.com",
+  "version": "1.0.6.1",
+  "icons": {
+    "16": "Images/icon.png",
+    "32": "Images/icon.png",
+    "48": "Images/icon.png",
+    "64": "Images/icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "scripting",
+    "alarms",
+    "notifications",
+    "tts"
+  ],
+  "host_permissions": [
+    "https://www.dream-singles.com/*",
+    "wss://ws.dream-singles.com/ws",
+    "https://dream-singles.com/members"
+  ],
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://extensionpay.com/*",
+        "https://www.dream-singles.com/*",
+        "https://dream-singles.com/members"
+      ],
+      "js": ["ExtPay.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}
