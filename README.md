@@ -68,7 +68,7 @@ After installing the extension, you will be able to:
 
 For development you will need:
 
-1. a text editor (VS Code is recommended)
+1. A text editor (VS Code is recommended)
 2. Knowledge of JavaScript and Chrome extensions API
 
 ## 🤝 Contribution
