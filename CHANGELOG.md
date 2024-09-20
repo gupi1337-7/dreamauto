@@ -2,6 +2,18 @@
 
 All significant changes to the Dream Auto project will be documented in this file.
 
+## Version: [1.0.7.0] - 2024-09-20
+
+### Added 
+
+- Option to set up notifications via Telegram.
+
+## Version: [1.0.6.2] - 2024-09-17
+
+### Added
+
+- Logic to handle Chrome's error page.
+
 ## [1.0.6.1] - 2024-09-12
 
 ### Fixed
