@@ -54,13 +54,13 @@ After installing the extension, you will be able to:
 
 ## 🔄 Latest updates
 
-### Version: 1.0.6.1
+### Version: 1.0.7.0
 
-- Minor fixes and optimizations
+- Added the option to set up notifications via Telegram.
 
-### Version: 1.0.6.0
+### Version: 1.0.6.2
 
-- Added ability to exclude favorites
+- Added logic to handle Chrome's error page.
 
 [Full list of changes](CHANGELOG.md)
 
