@@ -4,6 +4,7 @@ let countdownDisplay,
 function formatTime(e) {
   return Math.floor(e / 60) + ":" + ((e %= 60) < 10 ? "0" : "") + e;
 }
+
 function getTextFields() {
   for (let e = 1; e <= 50; e++) {
     let t = document.getElementById("text-" + e);
@@ -23,14 +24,98 @@ function clearTextFields() {
   }
   textFields = [];
 }
+
+const telegramButton = document.getElementById("enableTelegram");
+const telegramModal = document.getElementById("modalTelegram");
+const saveTelegramSettings = document.getElementById("saveTelegramSettings");
+const closeTelegramModal = document.getElementById("closeTelegramModal");
+const botTokenInput = document.getElementById("botToken");
+const chatIdInput = document.getElementById("chatId");
+const telegramIcon = document.getElementById("telegramIcon");
+chrome.storage.local.get(["botToken", "chatId"], function (result) {
+  if (result.botToken && result.chatId) {
+    telegramIcon.setAttribute("fill", "#0ff");
+    telegramButton.classList.remove("disabled");
+  } else {
+    telegramIcon.setAttribute("fill", "#ff0000");
+    telegramButton.classList.add("disabled");
+  }
+});
+
+const clearTelegramFields = document.getElementById("clearTelegramFields");
+
+clearTelegramFields.addEventListener("click", () => {
+  botTokenInput.value = "";
+  chatIdInput.value = "";
+
+  chrome.storage.local.remove(["botToken", "chatId"], function () {
+    console.log("Bot Token and Chat ID have been cleared.");
+  });
+
+  telegramIcon.setAttribute("fill", "#ff0000");
+  telegramButton.classList.add("disabled");
+});
+telegramButton.addEventListener("click", () => {
+  telegramModal.style.display = "block";
+
+  chrome.storage.local.get(["botToken", "chatId"], function (result) {
+    botTokenInput.value = result.botToken || "";
+    chatIdInput.value = result.chatId || "";
+  });
+});
+closeTelegramModal.addEventListener("click", () => {
+  telegramModal.style.display = "none";
+});
+telegramModal.addEventListener("mousedown", function (event) {
+  if (event.target === telegramModal) {
+    telegramModal.style.display = "none";
+  }
+});
+saveTelegramSettings.addEventListener("click", () => {
+  const botToken = botTokenInput.value.trim();
+  const chatId = chatIdInput.value.trim();
+
+  if (botToken && chatId) {
+    chrome.storage.local.set({ botToken, chatId }, function () {
+      chrome.runtime.sendMessage(
+        {
+          action: "testTelegramNotification",
+          botToken,
+          chatId,
+        },
+        function (response) {
+          if (response.success) {
+            alert("The settings have been saved and tested successfully!");
+            telegramButton.classList.remove("disabled");
+            telegramIcon.setAttribute("fill", "#0ff");
+            telegramModal.style.display = "none";
+          } else {
+            alert("Error when sending a test message: " + response.error);
+          }
+        }
+      );
+    });
+  } else {
+    alert("Please enter the bot token and chat ID.");
+  }
+});
+
 function enableSound() {
-  chrome.storage.local.get("enableSounds", (e) => {
+  chrome.storage.local.get(["enableSounds", "botToken", "chatId"], (e) => {
     e.enableSounds
       ? (chrome.storage.local.set({ enableSounds: !1 }),
         chrome.runtime.sendMessage({ command: "disableSound" }),
+        chrome.runtime.sendMessage({
+          action: "updateNotificationState",
+          enableTelegram: !1 && e.botToken && e.chatId,
+        }),
         updateButtonState(!1))
       : (chrome.storage.local.set({ enableSounds: !0 }),
         chrome.runtime.sendMessage({ command: "enableSound" }),
+        chrome.runtime.sendMessage({
+          action: "updateNotificationState",
+          enableTelegram: !0 && e.botToken && e.chatId,
+        }),
         updateButtonState(!0));
   });
 }
@@ -118,7 +203,7 @@ var modal = document.getElementById("myModal"),
       ((modal.querySelector(".modal-content p").innerHTML =
         "Version: " +
         e.version +
-        '<br><br>&mdash; Minor fixes. Optimizations.<br><br><br>Version: 1.0.6<br><br>&mdash; The user can now decide if they want to exclude or include favorites.<br><br><br>Version: 1.0.5.5 - 1.0.5.4<br><br>&mdash; Changes to the UI again.<br><br><br>Version: 1.0.5.3<br><br>&mdash; Small changes to the UI.<br><br>&mdash; Some bugs with names, which caused a heavy memory load, have been fixed.<br><br><br>Version: 1.0.5.2<br><br>&mdash; More bugs fixed. <br><br><br>Version: 1.0.5.1<br><br>&mdash; Fixed minor bugs.<br><br><br>Version: 1.0.5<br><br>&mdash; Added Radio.<br>&mdash; The user can now open the browser that sent the notification by clicking on the notification.<br><br><br>Version: 1.0.4.3<br><br>&mdash; Added a bypass when the DS changes the chat page to the main page.<br><br><br>Version: 1.0.4.2<br><br>&mdash; Fixed a bug that caused the name to not show up in notifications.<br>&mdash; Notification Optimization.<br><br><br>Version: 1.0.4.1<br><br>&mdash; Added name to TTS in case you have more than 1 account to prevent confusion.<br><br><br>Version: 1.0.4<br><br>&mdash; Added TTS function as an audio notification.<br><br><br>Version: 1.0.3.1 <br><br>&mdash; Fixed a bug that caused the chat timer to not be assigned if the popup was closed after assignment.<br><br><br>Version: 1.0.3 <br><br>&mdash; Removed "Myjchina" from the start of the letter.<br>&mdash; Swapped notification icons.<br>&mdash; Fixed bug when tab was not defined during searching for new invites.<br><br><br>Version: 1.0.2 <br><br>&mdash; Added WS reconnection to prevent notifications from an inactive browser from not being received.<br>&mdash; Fixed notification count to 1 for each type to prevent spam.<br><br><br>Version: 1.0.1 <br><br>&mdash; Tab behavior changed.<br>&mdash; Changed logic for letter notification.<br>&mdash; Fixed bug with connecting to WS.<br>&mdash; Fixed bug making not possible to set letters without at least one video file.<br>&mdash; Fixed array bug when text is filled in two fields and the field between them is empty.<br>&mdash; Fixed a bug where chat invitations were triggered twice after opening the tab for the very first time.<br><br><br>Version: 1.0.0 <br><br>&mdash; Extensions are combined into one.<br>&mdash; Added functionality to set custom  chat invites. <br>&mdash; Added notifications about letters and chats.'),
+        '<br><br>&mdash; Added the option to set up notifications via Telegram.<br><br><br>Version: 1.0.6.2<br><br>&mdash; Added logic to handle Chrome\'s error page.<br><br><br>Version: 1.0.6.1<br><br>&mdash; Minor fixes. Optimizations.<br><br><br>Version: 1.0.6<br><br>&mdash; The user can now decide if they want to exclude or include favorites.<br><br><br>Version: 1.0.5.5 - 1.0.5.4<br><br>&mdash; Changes to the UI again.<br><br><br>Version: 1.0.5.3<br><br>&mdash; Small changes to the UI.<br><br>&mdash; Some bugs with names, which caused a heavy memory load, have been fixed.<br><br><br>Version: 1.0.5.2<br><br>&mdash; More bugs fixed. <br><br><br>Version: 1.0.5.1<br><br>&mdash; Fixed minor bugs.<br><br><br>Version: 1.0.5<br><br>&mdash; Added Radio.<br>&mdash; The user can now open the browser that sent the notification by clicking on the notification.<br><br><br>Version: 1.0.4.3<br><br>&mdash; Added a bypass when the DS changes the chat page to the main page.<br><br><br>Version: 1.0.4.2<br><br>&mdash; Fixed a bug that caused the name to not show up in notifications.<br>&mdash; Notification Optimization.<br><br><br>Version: 1.0.4.1<br><br>&mdash; Added name to TTS in case you have more than 1 account to prevent confusion.<br><br><br>Version: 1.0.4<br><br>&mdash; Added TTS function as an audio notification.<br><br><br>Version: 1.0.3.1 <br><br>&mdash; Fixed a bug that caused the chat timer to not be assigned if the popup was closed after assignment.<br><br><br>Version: 1.0.3 <br><br>&mdash; Removed "Myjchina" from the start of the letter.<br>&mdash; Swapped notification icons.<br>&mdash; Fixed bug when tab was not defined during searching for new invites.<br><br><br>Version: 1.0.2 <br><br>&mdash; Added WS reconnection to prevent notifications from an inactive browser from not being received.<br>&mdash; Fixed notification count to 1 for each type to prevent spam.<br><br><br>Version: 1.0.1 <br><br>&mdash; Tab behavior changed.<br>&mdash; Changed logic for letter notification.<br>&mdash; Fixed bug with connecting to WS.<br>&mdash; Fixed bug making not possible to set letters without at least one video file.<br>&mdash; Fixed array bug when text is filled in two fields and the field between them is empty.<br>&mdash; Fixed a bug where chat invitations were triggered twice after opening the tab for the very first time.<br><br><br>Version: 1.0.0 <br><br>&mdash; Extensions are combined into one.<br>&mdash; Added functionality to set custom  chat invites. <br>&mdash; Added notifications about letters and chats.'),
       (modal.style.display = "block"));
   });
 let popupPort = chrome.runtime.connect({ name: "popup" });

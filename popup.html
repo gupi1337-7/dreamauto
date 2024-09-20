@@ -456,6 +456,107 @@ href=https://fonts.gstatic.com rel=preconnect crossorigin><link
     font-size: 12px;
     font-weight: 600;
   }
+
+  #enableTelegram {
+    background-color: #1f1e1e;
+    border-color: #0ff;
+    color: rgb(0, 255, 13);
+    padding: 5px;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 50%;
+    transition: none !important;
+    animation: none !important;
+    width: 35px;
+    height: 35px;
+    border: 2px solid #0ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #enableTelegram svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  #enableTelegram.disabled {
+    border-color: #ff0000;
+  }
+
+  #enableTelegram:active {
+    background-color: #333;
+  }
+
+  .modalTelegram {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+
+  .modalTelegram-content {
+    background-color: #fefefe;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 500px;
+    animation: modalOpen 0.3s ease-out;
+  }
+  .right {
+    align-items: flex-end;
+  }
+
+  @keyframes modalOpen {
+    from {
+      opacity: 0;
+      transform: translateY(-50px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  #botToken,
+  #chatId {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    box-sizing: border-box;
+  }
+
+  #saveTelegramSettings,
+  #closeTelegramModal {
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  #clearTelegramFields {
+    padding: 12px 20px;
+    margin-top: 10px;
+    margin-left: 10px;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  #clearTelegramFields:hover {
+    background-color: #d32f2f;
+  }
+  .hss {
+    color: rgb(0, 0, 0);
+  }
 </style>
 <div class="modal1" id="myModal1">
   <div class="modal1-content">
@@ -1305,11 +1406,26 @@ href=https://fonts.gstatic.com rel=preconnect crossorigin><link
 <button
   id="enableSound"
   class="disabled"
-  style="position: fixed; bottom: 11px; right: 90px"
+  style="position: fixed; bottom: 11px; right: 70px"
 >
   &#128263;
 </button>
-<button id="enableRadio" style="position: fixed; bottom: 11px; right: 160px">
+
+<button id="enableTelegram" style="position: fixed; bottom: 11px; right: 120px">
+  <svg
+    id="telegramIcon"
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 28 25"
+    width="20"
+    height="20"
+    fill="#0ff"
+  >
+    <path
+      d="M18.384,22.779c0.322,0.228 0.737,0.285 1.107,0.145c0.37,-0.141 0.642,-0.457 0.724,-0.84c0.869,-4.084 2.977,-14.421 3.768,-18.136c0.06,-0.28 -0.04,-0.571 -0.26,-0.758c-0.22,-0.187 -0.525,-0.241 -0.797,-0.14c-4.193,1.552 -17.106,6.397 -22.384,8.35c-0.335,0.124 -0.553,0.446 -0.542,0.799c0.012,0.354 0.25,0.661 0.593,0.764c2.367,0.708 5.474,1.693 5.474,1.693c0,0 1.452,4.385 2.209,6.615c0.095,0.28 0.314,0.5 0.603,0.576c0.288,0.075 0.596,-0.004 0.811,-0.207c1.216,-1.148 3.096,-2.923 3.096,-2.923c0,0 3.572,2.619 5.598,4.062Zm-11.01,-8.677l1.679,5.538l0.373,-3.507c0,0 6.487,-5.851 10.185,-9.186c0.108,-0.098 0.123,-0.262 0.033,-0.377c-0.089,-0.115 -0.253,-0.142 -0.376,-0.064c-4.286,2.737 -11.894,7.596 -11.894,7.596Z"
+    />
+  </svg>
+</button>
+<button id="enableRadio" style="position: fixed; bottom: 11px; right: 170px">
   &#127926;
 </button>
 <div class="genre-menu">
@@ -1319,6 +1435,20 @@ href=https://fonts.gstatic.com rel=preconnect crossorigin><link
   <div class="genre-item" id="clasicButton">Classic</div>
   <div class="genre-item" id="bluesButton">Blues</div>
   <div class="genre-item" id="hiphopButton">Hip-hop</div>
+</div>
+
+<div id="modalTelegram" class="modalTelegram">
+  <div class="modalTelegram-content">
+    <h2>Telegram notification settings</h2>
+    <p class="hss">
+      Enter the bot token and chat ID to send notifications to Telegram.
+    </p>
+    <input type="text" id="botToken" placeholder="Bot Token" />
+    <input type="text" id="chatId" placeholder="Chat ID" />
+    <button id="saveTelegramSettings">Save</button>
+    <button id="closeTelegramModal">Close</button>
+    <button id="clearTelegramFields">Clear Fields</button>
+  </div>
 </div>
 
 <p

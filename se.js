@@ -1,5 +1,6 @@
 const openButton = document.getElementById("open-button"),
   clickButton = document.getElementById("click-button");
+
 function saveUserSelection() {
   let e = {};
   [

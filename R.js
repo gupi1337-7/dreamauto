@@ -18,7 +18,7 @@ function positionMenuItems() {
     const angle = (index / (genreItems.length - 1)) * Math.PI;
     const x = Math.cos(angle) * radius;
     const y = Math.sin(angle) * radius;
-    item.style.left = `${152 + x}px`;
+    item.style.left = `${146 + x}px`;
     item.style.top = `${100 - y}px`;
   });
 }
