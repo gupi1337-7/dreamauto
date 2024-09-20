@@ -1,0 +1,17 @@
+.DS_Store
+Thumbs.db
+node_modules/
+npm-debug.log
+yarn-error.log
+dist/
+build/
+.vscode/
+.idea/
+*.tmp
+*.temp
+config.json
+*.log
+*.zip
+*.rar
+*.bak
+secrets.js
