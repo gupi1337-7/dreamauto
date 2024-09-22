@@ -54,13 +54,15 @@ After installing the extension, you will be able to:
 
 ## 🔄 Latest updates
 
+## Version: 1.0.7.1
+
+- New error detection options.
+
+- Restored some lines which were lost due to testing.
+
 ### Version: 1.0.7.0
 
 - Added the option to set up notifications via Telegram.
-
-### Version: 1.0.6.2
-
-- Added logic to handle Chrome's error page.
 
 [Full list of changes](CHANGELOG.md)
 

@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "DreamAuto",
   "description": "All-in-one software for website interaction on Dream-Singles.com",
-  "version": "1.0.7.0",
+  "version": "1.0.7.1",
   "icons": {
     "16": "Images/icon.png",
     "32": "Images/icon.png",

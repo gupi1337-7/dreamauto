@@ -2,9 +2,19 @@
 
 All significant changes to the Dream Auto project will be documented in this file.
 
+## Version: [1.0.7.1] - 2024-09-22
+
+### Added
+
+- New error detection options.
+
+### Fixed
+
+- Restored some lines which were lost due to testing.
+
 ## Version: [1.0.7.0] - 2024-09-20
 
-### Added 
+### Added
 
 - Option to set up notifications via Telegram.
 
