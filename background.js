@@ -2743,12 +2743,6 @@ async function checkLetters() {
             let previousCount = localStorage.getItem("previousCount");
             previousCount = previousCount ? parseInt(previousCount) : null;
             let ulElement = document.querySelector("ul.nohide");
-            let response = await fetch("https://www.dream-singles.com/members");
-            if (!response.ok)
-              throw new Error(`HTTP error! status: ${response.status}`);
-
-            let text = await response.text();
-            let doc = new DOMParser().parseFromString(text, "text/html");
 
             if (ulElement) {
               let myMessagesLink = ulElement.querySelector(
