@@ -2,6 +2,22 @@
 
 All significant changes to the Dream Auto project will be documented in this file.
 
+## Version: [1.0.8.0] - 2024-10-09
+
+### Added
+
+- Added auto reply.
+- Clicking on a chat notification opens the chat tabs for each user.
+- Clicking on an email notification opens the inbox tab.
+
+## Version: [1.0.7.2] - 2024-10-03
+
+### Added
+
+- Changed TTS sending logic. It should now take the given voice first, if it is not found then any US or UK Google, if they are not found then any possible voice.
+
+- New emails: Changed the logic. One more element will now be checked.
+
 ## Version: [1.0.7.1] - 2024-09-22
 
 ### Added
