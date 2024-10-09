@@ -261,6 +261,115 @@
       #favoriteShouldClick {
         margin-bottom: 20px;
       }
+      #AutoMessage {
+        width: 100%;
+        padding: 10px;
+        margin: 10px 0;
+        box-sizing: border-box;
+      }
+
+      #saveAutoMessage,
+      #closeAutoMessage {
+        padding: 10px 20px;
+        margin-top: 10px;
+        cursor: pointer;
+      }
+      #clearAutoFields {
+        padding: 12px 20px;
+        margin-top: 10px;
+        margin-left: 10px;
+        background-color: #f44336;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+
+      #clearAutoFields:hover {
+        background-color: #d32f2f;
+      }
+      .hss {
+        color: rgb(0, 0, 0);
+      }
+      #autoReply {
+        background-color: #1f1e1e;
+        border-color: #0ff;
+        color: rgb(0, 255, 13);
+        padding: 5px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 50%;
+        transition: none !important;
+        animation: none !important;
+        width: 35px;
+        height: 35px;
+        border: 2px solid #0ff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #autoReply svg {
+        width: 35px;
+        height: 35px;
+      }
+
+      #autoReply.disabled {
+        border-color: #ff0000;
+      }
+
+      #autoReply:active {
+        background-color: #333;
+      }
+
+      .modalAutoReply {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .modalAutoReply-content {
+        background-color: #fefefe;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 500px;
+        animation: modalOpen 0.3s ease-out;
+      }
+      .right {
+        align-items: flex-end;
+      }
+
+      @keyframes modalOpen {
+        from {
+          opacity: 0;
+          transform: translateY(-50px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .enabled {
+        border: 2px solid #0ff;
+        background-color: #0ff;
+        border-color: #0ff;
+      }
+
+      .disabled {
+        border: 2px solid red;
+        background-color: red;
+        border-color: red;
+      }
     </style>
   </head>
   <body>
@@ -351,7 +460,62 @@
     <div id="countdown-display"></div>
     <button id="start-script">Start</button>
     <button id="stop-script">Stop</button>
+    <button id="autoReply" style="position: fixed; bottom: 11px; right: 20px">
+      <svg
+        id="autoReplyIcon"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 100 100"
+      >
+        <defs>
+          <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color: #ff6b6b; stop-opacity: 1" />
+            <stop offset="100%" style="stop-color: #4ecdc4; stop-opacity: 1" />
+          </linearGradient>
+        </defs>
 
+        <circle cx="50" cy="50" r="45" fill="url(#grad)" />
+        <path
+          d="M55 20 L30 50 L45 50 L40 80 L70 50 L55 50 Z"
+          fill="#FFD93D"
+          stroke="#333"
+          stroke-width="2"
+        />
+        <path
+          d="M85 50 A35 35 0 1 1 50 15"
+          fill="none"
+          stroke="#333"
+          stroke-width="6"
+          stroke-linecap="round"
+        />
+        <circle cx="35" cy="40" r="5" fill="#333" />
+        <circle cx="65" cy="40" r="5" fill="#333" />
+        <path
+          d="M40 65 Q50 75 60 65"
+          fill="none"
+          stroke="#333"
+          stroke-width="3"
+          stroke-linecap="round"
+        />
+      </svg>
+    </button>
+    <div id="modalAutoReply" class="modalAutoReply">
+      <div class="modalAutoReply-content">
+        <h2>Auto message settings</h2>
+        <p class="hss">Type a message to set it up for a chat auto reply.</p>
+
+        <textarea
+          id="AutoMessage"
+          name="Area"
+          rows="4"
+          cols="30"
+          placeholder="Provided messages will be randomly used to init chat. Please write each with a new line:"
+        ></textarea>
+
+        <button id="saveAutoMessage">Save</button>
+        <button id="closeAutoMessage">Close</button>
+        <button id="clearAutoFields">Clear Fields</button>
+      </div>
+    </div>
     <script src="p.js"></script>
     <script src="l.js"></script>
   </body>

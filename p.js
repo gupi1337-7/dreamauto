@@ -5,6 +5,100 @@ let countdownDisplay,
 function formatTime(e) {
   return Math.floor(e / 60) + ":" + ((e %= 60) < 10 ? "0" : "") + e;
 }
+const AutoMessageButton = document.getElementById("autoReply");
+const modalAutoReply = document.getElementById("modalAutoReply");
+const saveAutoMessage = document.getElementById("saveAutoMessage");
+const closeAutoMessage = document.getElementById("closeAutoMessage");
+const AutoMessage = document.getElementById("AutoMessage");
+const autoReplyIcon = document.getElementById("autoReplyIcon");
+
+// Add debug logging
+function debugLog(message) {
+  console.log(`[DEBUG] ${message}`);
+}
+
+// Check stored message on load
+chrome.storage.local.get(["AutoMessageReply"], function (result) {
+  debugLog(`Initial AutoMessageReply: ${result.AutoMessageReply}`);
+  if (result.AutoMessageReply) {
+    AutoMessageButton.classList.remove("disabled");
+    debugLog("AutoMessageButton enabled");
+  } else {
+    AutoMessageButton.classList.add("disabled");
+    debugLog("AutoMessageButton disabled");
+  }
+});
+
+const clearAutoFields = document.getElementById("clearAutoFields");
+
+clearAutoFields.addEventListener("click", () => {
+  AutoMessage.value = "";
+  debugLog("Cleared AutoMessage input field");
+
+  chrome.storage.local.remove(["AutoMessageReply"], function () {
+    debugLog("AutoMessageReply has been cleared from storage");
+  });
+
+  AutoMessageButton.classList.add("disabled");
+  debugLog("AutoMessageButton disabled after clearing");
+});
+
+AutoMessageButton.addEventListener("click", () => {
+  modalAutoReply.style.display = "block";
+  debugLog("Opened auto reply modal");
+
+  chrome.storage.local.get(["AutoMessageReply"], function (result) {
+    debugLog(`Retrieved AutoMessageReply: ${result.AutoMessageReply}`);
+    AutoMessage.value = result.AutoMessageReply.join("\n") || "";
+    debugLog(`Set AutoMessage input value to: ${AutoMessage.value}`);
+  });
+});
+
+closeAutoMessage.addEventListener("click", () => {
+  modalAutoReply.style.display = "none";
+  debugLog("Closed auto reply modal");
+});
+
+modalAutoReply.addEventListener("mousedown", function (event) {
+  if (event.target === modalAutoReply) {
+    modalAutoReply.style.display = "none";
+    debugLog("Closed auto reply modal by clicking outside");
+  }
+});
+
+saveAutoMessage.addEventListener("click", () => {
+  const AutoMessageReply = AutoMessage.value.trim();
+  debugLog(`Attempting to save AutoMessageReply: ${AutoMessageReply}`);
+
+  if (AutoMessageReply) {
+    let formattedAutoMessage = AutoMessageReply.split("\n").filter(
+      (msg) => msg.trim() !== ""
+    );
+    console.log("input saved: " + formattedAutoMessage),
+      chrome.storage.local.set(
+        { AutoMessageReply: formattedAutoMessage },
+        function () {
+          if (chrome.runtime.lastError) {
+            debugLog(
+              `Error saving AutoMessageReply: ${chrome.runtime.lastError.message}`
+            );
+          } else {
+            debugLog("Successfully saved AutoMessageReply");
+            AutoMessageButton.classList.remove("disabled");
+            debugLog("AutoMessageButton enabled after saving");
+            alert(
+              "Ready to use current message to reply. Please enable notifications"
+            );
+            modalAutoReply.style.display = "none";
+          }
+        }
+      );
+  } else {
+    alert("Please enter the text.");
+    debugLog("Attempted to save empty AutoMessageReply");
+  }
+});
+
 function updateScriptStatus() {
   let e = document.getElementById("script-status");
   isScriptRunning

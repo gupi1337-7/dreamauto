@@ -2518,7 +2518,7 @@ async function getAnyDreamTab() {
   });
 }
 async function extractUserName(NameTab) {
-  const maxAttempts = 3000;
+  const maxAttempts = 500;
   let attempt = 0;
   while (attempt < maxAttempts) {
     try {
@@ -2588,19 +2588,56 @@ async function closeAndRetry() {
 
 async function connectWebSocket() {
   try {
-    //await getAnyDreamTab();
-    let { userName } = await chrome.storage.local.get("userName");
+    console.log("Attempting to retrieve storage data...");
+
+    let { userName, AutoMessageReply } = await chrome.storage.local.get([
+      "userName",
+      "AutoMessageReply",
+    ]);
+
+    console.log("Retrieved from storage:", { userName, AutoMessageReply });
+
+    AutoMessageReply = AutoMessageReply || "";
     userName = userName || "";
+
+    console.log("Final values:", { userName, AutoMessageReply });
+
     if (!tabIdNotifications) {
       await getAnyDreamTab();
     }
+
     await chrome.scripting.executeScript({
       target: { tabId: tabIdNotifications },
-      func: (userName) => {
+      func: (userName, AutoMessageReply) => {
+        console.log("In content script:", { userName, AutoMessageReply });
+        console.log(AutoMessageReply);
         console.log(userName);
         let ws;
         let reconnectInterval;
         let chatInvitesInterval;
+
+        const sendMessage = (ws, message) => {
+          const maxRetries = 10;
+          const retryDelay = 500;
+
+          const trySendMessage = (retryCount) => {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify(message));
+            } else if (retryCount < maxRetries) {
+              setTimeout(() => {
+                trySendMessage(retryCount + 1);
+                console.log(`Retrying to send message after ${retryDelay} ms`);
+              }, retryDelay);
+            } else {
+              console.error(
+                `Failed to send message after ${maxRetries} retries`
+              );
+              chrome.runtime.sendMessage({ type: "closeAndRetry" });
+            }
+          };
+
+          trySendMessage(0);
+        };
 
         const initializeWebSocket = () => {
           if (ws) {
@@ -2608,31 +2645,6 @@ async function connectWebSocket() {
           }
 
           ws = new WebSocket("wss://ws.dream-singles.com/ws");
-
-          const sendMessage = (ws, message) => {
-            const maxRetries = 10;
-            const retryDelay = 500;
-
-            const trySendMessage = (retryCount) => {
-              if (ws.readyState === WebSocket.OPEN) {
-                ws.send(JSON.stringify(message));
-              } else if (retryCount < maxRetries) {
-                setTimeout(() => {
-                  trySendMessage(retryCount + 1);
-                  console.log(
-                    `Retrying to send message after ${retryDelay} ms`
-                  );
-                }, retryDelay);
-              } else {
-                console.error(
-                  `Failed to send message after ${maxRetries} retries`
-                );
-                chrome.runtime.sendMessage({ type: "closeAndRetry" });
-              }
-            };
-
-            trySendMessage(0);
-          };
 
           ws.addEventListener("open", async () => {
             console.log("Connection established!");
@@ -2644,7 +2656,13 @@ async function connectWebSocket() {
               sendMessage(ws, {
                 type: "auth",
                 connection: "invite",
-                subscribe_to: ["auth-response", "chat-invites-response"],
+                subscribe_to: [
+                  "auth-response",
+                  "chat-invites-response",
+                  "chat-message",
+                  "chat-echo-message",
+                  "delete-invites-from",
+                ],
                 payload: token,
               });
             } catch (error) {
@@ -2661,6 +2679,7 @@ async function connectWebSocket() {
                   if (chatInvitesInterval) {
                     clearInterval(chatInvitesInterval);
                   }
+
                   chatInvitesInterval = setInterval(() => {
                     sendMessage(ws, { type: "chat-invites" });
                   }, 6000);
@@ -2670,9 +2689,26 @@ async function connectWebSocket() {
                 break;
               case "chat-invites-response":
                 let invites = data.payload;
+                if (AutoMessageReply && AutoMessageReply.length > 0) {
+                  const randomMessage =
+                    AutoMessageReply[
+                      Math.floor(Math.random() * AutoMessageReply.length)
+                    ];
+                  console.log(randomMessage + "is going to be sent");
+                  invites.map((chatId) => {
+                    return handleNewChatMessage(
+                      chatId.user.id,
+                      randomMessage,
+                      chatId.to
+                    );
+                  });
+                } else {
+                  console.log("Auto message is not going to be sent");
+                }
+
                 let items = invites.map((invite) => ({
                   title: invite.user.displayname || "Unknown User",
-                  message: `ID: ${invite.user.id}, `,
+                  message: `ID: ${invite.user.id}`,
                 }));
                 console.log("Current chat invites:", invites);
                 let ttstextChat = `${userName}, You have chat invites from: ${invites
@@ -2689,6 +2725,7 @@ async function connectWebSocket() {
                   items: items,
                 });
                 break;
+
               default:
                 console.log("Received message:", data);
             }
@@ -2703,6 +2740,30 @@ async function connectWebSocket() {
           });
         };
 
+        const handleNewChatMessage = (userId, replyMessage, to) => {
+          send_chat_message(replyMessage, userId, to);
+        };
+
+        const send_chat_message = (message, to, rec) => {
+          let payload = {
+            type: "chat-message",
+            to: to,
+            payload: message,
+          };
+          sendMessage(ws, payload);
+
+          let deleteChatInvite = {
+            recipient: rec,
+            sender: to,
+            type: "delete-invites-from",
+          };
+          sendMessage(ws, deleteChatInvite);
+
+          console.log(
+            "sent to " + to + " deleted " + JSON.stringify(deleteChatInvite)
+          );
+        };
+
         initializeWebSocket();
 
         if (reconnectInterval) {
@@ -2710,18 +2771,34 @@ async function connectWebSocket() {
         }
         reconnectInterval = setInterval(() => {
           console.log("Reconnecting WebSocket...");
-          //initializeWebSocket(); //cause problms with name in a while
           chrome.runtime.sendMessage({ type: "closeAndRetry" });
         }, 30000);
       },
-      args: [userName],
+      args: [userName, AutoMessageReply],
     });
     console.log("WebSocket script executed");
   } catch (error) {
     console.error("Error: ", error);
   }
 }
-
+async function checkAutoMessageReply() {
+  try {
+    let { AutoMessageReply } = await chrome.storage.local.get([
+      "AutoMessageReply",
+    ]);
+    console.log("Current AutoMessageReply value:", AutoMessageReply);
+  } catch (error) {
+    console.error("Error checking AutoMessageReply:", error);
+  }
+}
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
+    console.log(
+      `Storage key "${key}" in namespace "${namespace}" changed.`,
+      `Old value was "${oldValue}", new value is "${newValue}".`
+    );
+  }
+});
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "closeAndRetry") {
     closeAndRetry();
@@ -2742,14 +2819,16 @@ async function checkLetters() {
           try {
             let previousCount = localStorage.getItem("previousCount");
             previousCount = previousCount ? parseInt(previousCount) : null;
-            let ulElement = document.querySelector("ul.nohide");
+            let ulElement = document.querySelector(".col-sm-6.pl10.pr0");
 
             if (ulElement) {
               let myMessagesLink = ulElement.querySelector(
                 'a[href*="/messaging/inbox"]'
               );
               if (myMessagesLink) {
-                let myMessagesSpan = myMessagesLink.querySelector(".new-count");
+                let myMessagesSpan = myMessagesLink.querySelector(
+                  ".total-count.has-new"
+                );
                 if (myMessagesSpan) {
                   let newCountText = myMessagesSpan.textContent.trim();
                   let newCount = parseInt(newCountText);
@@ -2784,7 +2863,7 @@ async function checkLetters() {
                 console.log("You don't have any new letters");
               }
             } else {
-              console.log("The list of ul with class 'nohide' was not found");
+              console.log("The list not found");
             }
           } catch (error) {
             console.error("Error fetching new count element:", error);
@@ -2827,7 +2906,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
       } catch (error) {
         console.error("Error launching scripts: ", error);
       } finally {
-        console.log("it's OK skript running with no problems");
+        console.log("it's OK script running with no problems");
         resetScriptRunningFlag();
       }
     }
@@ -2893,13 +2972,14 @@ chrome.runtime.onMessage.addListener((e, o, t) => {
             let updateData = {};
             updateData[storageKey] = notificationId;
             chrome.storage.local.set(updateData);
-
-            chrome.notifications.onClicked.addListener((clickedId) => {
-              if (clickedId === notificationId) {
-                focusBrowserWindow();
-              }
-            });
           });
+          if (type === "chat") {
+            const chatIds = notificationOptions.items.map((item) =>
+              parseInt(item.message.split(": ")[1])
+            );
+            const uniqueChatIds = [...new Set(chatIds)];
+            chrome.storage.local.set({ lastChatInvites: uniqueChatIds });
+          }
 
           if (
             result.updateNotificationState &&
@@ -2955,20 +3035,54 @@ chrome.runtime.onMessage.addListener((e, o, t) => {
     }
   );
 });
+function openChatTabs(chatIds) {
+  const uniqueChatIds = [...new Set(chatIds)];
 
-function focusBrowserWindow() {
+  uniqueChatIds.forEach((chatId) => {
+    const chatUrl = `https://www.dream-singles.com/members/chat/?pid=${chatId}`;
+    chrome.tabs.create({ url: chatUrl, active: true }, (tab) => {
+      console.log(`Opened chat tab for user ID: ${chatId}`);
+    });
+  });
+}
+function openInbox(windowId) {
+  const inboxUrl = "https://www.dream-singles.com/members/messaging/inbox";
+
+  chrome.tabs.query({ url: inboxUrl, windowId: windowId }, (tabs) => {
+    if (tabs.length > 0) {
+      chrome.tabs.update(tabs[0].id, { active: true });
+    } else {
+      chrome.tabs.create({ url: inboxUrl, active: true });
+    }
+  });
+}
+function focusBrowserWindow(chatIds) {
   chrome.windows.getCurrent({ populate: true }, (window) => {
-    chrome.windows.update(window.id, { focused: true });
-    chrome.tabs.query({ active: true, windowId: window.id }, (tabs) => {
-      if (tabs.length > 0) {
-        chrome.tabs.update(tabs[0].id, { active: true });
+    chrome.windows.update(window.id, { focused: true }, () => {
+      if (chatIds && chatIds.length > 0) {
+        openChatTabs(chatIds);
+      } else {
+        openInbox(window.id);
       }
     });
   });
 }
 
 chrome.notifications.onClicked.addListener((notificationId) => {
-  focusBrowserWindow();
+  chrome.storage.local.get(
+    ["chatNotificationId", "lettersNotificationId"],
+    (result) => {
+      if (notificationId === result.chatNotificationId) {
+        chrome.storage.local.get(["lastChatInvites"], (data) => {
+          console.log("get from storage " + data);
+          const chatIds = data.lastChatInvites || [];
+          focusBrowserWindow(chatIds);
+        });
+      } else {
+        focusBrowserWindow();
+      }
+    }
+  );
 });
 
 function processTTSQueue() {
@@ -2979,21 +3093,66 @@ function processTTSQueue() {
     }
     isSpeaking = true;
     const text = ttsQueue.shift();
-    chrome.tts.speak(text, {
-      voiceName: "Google UK English Male",
-      lang: "en-GB",
-      rate: 1.0,
-      pitch: 1.0,
-      volume: 0.8,
-      onEvent: function (event) {
-        if (event.type === "end" || event.type === "error") {
-          isSpeaking = false;
-          processTTSQueue();
+
+    const desiredVoice = "Google UK English Male";
+
+    chrome.tts.getVoices((voices) => {
+      // console.log(
+      //   "Available TTS voices:",
+      //   voices.map((voice) => `${voice.voiceName} (${voice.lang})`)
+      // );
+
+      const findSuitableVoice = () => {
+        let voice = voices.find((v) => v.voiceName === desiredVoice);
+
+        if (!voice) {
+          voice = voices.find(
+            (v) =>
+              v.voiceName.toLowerCase().includes("google") &&
+              (v.lang.startsWith("en-US") || v.lang.startsWith("en-GB"))
+          );
         }
-        if (event.type === "error") {
-          console.error("Error during TTS: " + event.errorMessage);
+
+        if (!voice) {
+          voice = voices.find(
+            (v) => v.lang.startsWith("en-US") || v.lang.startsWith("en-GB")
+          );
         }
-      },
+
+        return voice || voices[0];
+      };
+
+      const voiceToUse = findSuitableVoice();
+
+      chrome.tts.speak(text, {
+        voiceName: voiceToUse.voiceName,
+        lang: voiceToUse.lang,
+        rate: 1.0,
+        pitch: 1.0,
+        volume: 0.8,
+        onEvent: function (event) {
+          if (event.type === "start") {
+            console.log(
+              "TTS started with voice:",
+              voiceToUse.voiceName,
+              "Language:",
+              voiceToUse.lang
+            );
+            if (voiceToUse.voiceName !== desiredVoice) {
+              console.warn(
+                `Desired voice "${desiredVoice}" was not available. Using "${voiceToUse.voiceName}" instead.`
+              );
+            }
+          }
+          if (event.type === "end" || event.type === "error") {
+            isSpeaking = false;
+            processTTSQueue();
+          }
+          if (event.type === "error") {
+            console.error("Error during TTS: " + event.errorMessage);
+          }
+        },
+      });
     });
   }
 }
@@ -3003,9 +3162,19 @@ function playTTS(text) {
   ttsQueue.push(messageWithName);
   processTTSQueue();
 }
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === "playTTS") {
     playTTS(message.text);
+  }
+});
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === "getAvailableVoices") {
+    chrome.tts.getVoices((voices) => {
+      sendResponse(voices.map((voice) => `${voice.voiceName} (${voice.lang})`));
+    });
+    return true;
   }
 });
 async function sendTelegramMessage(botToken, chatId, message) {
